@@ -10,9 +10,9 @@
     --card: #ffffff;
     --border: #d9d9d9;
     --muted: #ececec;
-    --subtle: #6b6b6b;
+    --subtle: #555555;
     --fg: #111111;
-    --fg-secondary: #444444;
+    --fg-secondary: #333333;
     --accent: #111111;
     --accent-fg: #ffffff;
     --highlight: #9a6700;
@@ -45,9 +45,9 @@
     --card: #1a1a1a;
     --border: #333333;
     --muted: #242424;
-    --subtle: #9a9a9a;
+    --subtle: #b3b3b3;
     --fg: #f0f0f0;
-    --fg-secondary: #b8b8b8;
+    --fg-secondary: #d4d4d4;
     --accent: #f0f0f0;
     --accent-fg: #0c0c0c;
     --highlight: #e3b341;
@@ -63,8 +63,8 @@
     --type-list: #79c0ff;
     --type-dict: #ff7b72;
     --bar-fill: #d4d4d4;
-    --editor-bg: #121212;
-    --editor-fg: #f2f2f2;
+    --editor-bg: #0f0f0f;
+    --editor-fg: #f0f0f0;
     --editor-gutter: #737373;
     --editor-comment: #8b949e;
     --editor-keyword: #ff7b72;
@@ -168,6 +168,7 @@
   .panel--code {
     display: flex;
     flex-direction: column;
+    background-color: var(--editor-bg, var(--surface));
   }
 
   .panel--viz {
@@ -225,7 +226,7 @@
     font-family: ui-monospace, monospace;
     font-size: 11px;
     font-variant-numeric: tabular-nums;
-    color: var(--subtle);
+    color: var(--fg-secondary);
   }
 
   .btn-group {
@@ -245,7 +246,7 @@
     font-size: 12px;
     font-weight: 500;
     line-height: 1;
-    color: var(--fg-secondary);
+    color: var(--fg);
     transition: background-color 0.12s, color 0.12s;
   }
 
@@ -289,7 +290,7 @@
   }
 
   .step-meta--empty {
-    color: var(--subtle);
+    color: var(--fg-secondary);
   }
 
   .step-line {
@@ -429,7 +430,7 @@
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--subtle);
+    color: var(--fg-secondary);
   }
 
   .text-muted {
@@ -556,6 +557,12 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.08),
       0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .code-editor .cm-editor,
+  .code-editor .cm-scroller,
+  .code-editor .cm-gutters {
+    background-color: transparent !important;
   }
 
   input[type="range"] {

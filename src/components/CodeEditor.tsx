@@ -14,6 +14,34 @@ interface CodeEditorProps {
   isDark?: boolean;
 }
 
+const LIGHT = {
+  bg: "#ffffff",
+  fg: "#1a1a1a",
+  gutter: "#6e6e6e",
+  comment: "#57606a",
+  keyword: "#cf222e",
+  string: "#0a3069",
+  number: "#0550ae",
+  fn: "#6639ba",
+  operator: "#1a1a1a",
+  highlightBg: "rgba(154, 103, 0, 0.18)",
+  highlightBorder: "#9a6700",
+};
+
+const DARK = {
+  bg: "#0f0f0f",
+  fg: "#f0f0f0",
+  gutter: "#8b8b8b",
+  comment: "#9aa0a6",
+  keyword: "#ff7b72",
+  string: "#a5d6ff",
+  number: "#79c0ff",
+  fn: "#d2a8ff",
+  operator: "#e0e0e0",
+  highlightBg: "rgba(227, 179, 65, 0.22)",
+  highlightBorder: "#e3b341",
+};
+
 const setHighlightLine = StateEffect.define<number | undefined>();
 
 const highlightLineField = StateField.define<DecorationSet>({
@@ -37,40 +65,44 @@ const highlightLineField = StateField.define<DecorationSet>({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const editorChrome = EditorView.theme({
-  "&": {
-    backgroundColor: "var(--editor-bg)",
-    color: "var(--editor-fg)",
-  },
-  ".cm-content": { caretColor: "var(--editor-fg)" },
-  ".cm-cursor, &.cm-focused .cm-cursor": {
-    borderLeftColor: "var(--editor-fg)",
-  },
-  "&.cm-focused .cm-selectionBackground, ::selection": {
-    backgroundColor: "var(--highlight-bg) !important",
-  },
-  ".cm-gutters": {
-    backgroundColor: "var(--editor-bg)",
-    color: "var(--editor-gutter)",
-    border: "none",
-  },
-  ".cm-activeLineGutter": { backgroundColor: "transparent" },
-  ".cm-trace-highlight": {
-    backgroundColor: "var(--highlight-bg) !important",
-    borderLeft: "2px solid var(--highlight) !important",
-  },
-});
+function createEditorTheme(colors: typeof LIGHT) {
+  return EditorView.theme(
+    {
+      "&": { backgroundColor: colors.bg, color: colors.fg },
+      ".cm-scroller": { backgroundColor: colors.bg },
+      ".cm-content": { caretColor: colors.fg },
+      ".cm-cursor, &.cm-focused .cm-cursor": { borderLeftColor: colors.fg },
+      "&.cm-focused .cm-selectionBackground, ::selection": {
+        backgroundColor: `${colors.highlightBg} !important`,
+      },
+      ".cm-gutters": {
+        backgroundColor: colors.bg,
+        color: colors.gutter,
+        border: "none",
+      },
+      ".cm-activeLineGutter": { backgroundColor: "transparent" },
+      ".cm-lineNumbers .cm-gutterElement": { color: colors.gutter },
+      ".cm-trace-highlight": {
+        backgroundColor: `${colors.highlightBg} !important`,
+        borderLeft: `2px solid ${colors.highlightBorder} !important`,
+      },
+    },
+    { dark: colors === DARK }
+  );
+}
 
-function buildHighlightStyle(isDark: boolean) {
+function createHighlightStyle(colors: typeof LIGHT) {
   return HighlightStyle.define([
-    { tag: tags.comment, color: "var(--editor-comment)" },
-    { tag: tags.keyword, color: "var(--editor-keyword)" },
-    { tag: tags.string, color: "var(--editor-string)" },
-    { tag: tags.number, color: "var(--editor-number)" },
-    { tag: tags.function(tags.variableName), color: "var(--editor-fn)" },
-    { tag: tags.definition(tags.variableName), color: "var(--editor-fg)" },
-    { tag: tags.variableName, color: "var(--editor-fg)" },
-    { tag: tags.operator, color: isDark ? "#c8c8c8" : "#3d3d3d" },
+    { tag: tags.comment, color: colors.comment },
+    { tag: tags.keyword, color: colors.keyword, fontWeight: "600" },
+    { tag: tags.string, color: colors.string },
+    { tag: tags.number, color: colors.number },
+    { tag: tags.function(tags.variableName), color: colors.fn },
+    { tag: tags.definition(tags.variableName), color: colors.fg },
+    { tag: tags.variableName, color: colors.fg },
+    { tag: tags.operator, color: colors.operator },
+    { tag: tags.punctuation, color: colors.operator },
+    { tag: tags.bracket, color: colors.operator },
   ]);
 }
 
@@ -82,17 +114,18 @@ export function CodeEditor({
   isDark = true,
 }: CodeEditorProps) {
   const viewRef = useRef<EditorView | null>(null);
+  const colors = isDark ? DARK : LIGHT;
 
   const extensions = useMemo(
     () => [
       python(),
-      editorChrome,
-      syntaxHighlighting(buildHighlightStyle(isDark)),
+      createEditorTheme(colors),
+      syntaxHighlighting(createHighlightStyle(colors)),
       highlightLineField,
       EditorView.lineWrapping,
       ...(readOnly ? [EditorView.editable.of(false)] : []),
     ],
-    [readOnly, isDark]
+    [readOnly, colors]
   );
 
   useEffect(() => {
@@ -114,8 +147,10 @@ export function CodeEditor({
 
   return (
     <CodeMirror
+      key={isDark ? "dark" : "light"}
       value={value}
       height="100%"
+      theme="none"
       extensions={extensions}
       onChange={onChange}
       basicSetup={{
@@ -125,7 +160,7 @@ export function CodeEditor({
         autocompletion: false,
       }}
       editable={!readOnly}
-      className="h-full text-[13px] font-mono [&_.cm-editor]:h-full [&_.cm-scroller]:overflow-auto [&_.cm-editor]:outline-none"
+      className="code-editor h-full text-[13px] font-mono [&_.cm-editor]:h-full [&_.cm-scroller]:overflow-auto [&_.cm-editor]:outline-none"
       onCreateEditor={(view) => {
         viewRef.current = view;
       }}
