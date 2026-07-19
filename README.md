@@ -2,7 +2,7 @@
 
 Step through Python code and watch variables change — entirely in your browser.
 
-![Glass — bubble sort visualization](docs/screenshot.png)
+![Glass — build a list visualization](docs/screenshot.png)
 
 ## Quick start
 

@@ -32,6 +32,7 @@ interface PlaybackControlsProps {
   isPlaying: boolean;
   isRunning: boolean;
   canRun: boolean;
+  step: TraceStep | null;
   onRun: () => void;
   onStepChange: (step: number) => void;
   onPlayPause: () => void;
@@ -45,6 +46,7 @@ function PlaybackControls({
   isPlaying,
   isRunning,
   canRun,
+  step,
   onRun,
   onStepChange,
   onPlayPause,
@@ -123,37 +125,17 @@ function PlaybackControls({
           disabled={disabled}
         />
         <span className="control-count">
+          {step ? (
+            <>
+              <span className="step-line">L{step.line}</span>
+              <span className="control-count-sep">·</span>
+              <span className="step-event">{step.event}</span>
+              <span className="control-count-sep">·</span>
+            </>
+          ) : null}
           {disabled ? "—" : `${currentStep + 1} / ${totalSteps}`}
         </span>
       </div>
-    </div>
-  );
-}
-
-function StepInfo({
-  step,
-  hasTrace,
-}: {
-  step: TraceStep | null;
-  hasTrace: boolean;
-}) {
-  if (!step) {
-    return (
-      <div className="step-meta step-meta--empty">
-        {hasTrace ? "No steps recorded" : "Run to trace execution, then Play to step through"}
-      </div>
-    );
-  }
-
-  return (
-    <div className="step-meta">
-      <span className="step-line">L{step.line}</span>
-      <span className="step-event">{step.event}</span>
-      {step.event === "return" && "returnValue" in step && (
-        <span className="step-return font-mono">
-          {(step as TraceStep & { returnValue?: string }).returnValue}
-        </span>
-      )}
     </div>
   );
 }
@@ -165,7 +147,6 @@ interface VisualizationPanelProps {
   isPlaying: boolean;
   isRunning: boolean;
   canRun: boolean;
-  hasTrace: boolean;
   stdout: string;
   onRun: () => void;
   onStepChange: (step: number) => void;
@@ -181,7 +162,6 @@ export function VisualizationPanel({
   isPlaying,
   isRunning,
   canRun,
-  hasTrace,
   stdout,
   onRun,
   onStepChange,
@@ -201,14 +181,13 @@ export function VisualizationPanel({
         isPlaying={isPlaying}
         isRunning={isRunning}
         canRun={canRun}
+        step={step}
         onRun={onRun}
         onStepChange={onStepChange}
         onPlayPause={onPlayPause}
         onFirst={onFirst}
         onLast={onLast}
       />
-
-      <StepInfo step={step} hasTrace={hasTrace} />
 
       <div className="grid min-h-0 flex-1 grid-rows-[1fr_auto]">
         <VariablePanel

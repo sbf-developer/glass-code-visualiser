@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CodeEditor } from "./components/CodeEditor";
-import { Logo } from "./components/Logo";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { VisualizationPanel } from "./components/VisualizationPanel";
 import { EXAMPLES } from "./examples";
@@ -107,10 +106,7 @@ export default function App() {
   return (
     <div className="app-shell flex h-screen flex-col">
       <header className="app-header">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <Logo size={18} />
-          <h1 className="brand-title">Glass</h1>
-        </div>
+        <h1 className="brand-title">Glass</h1>
 
         <div className="flex shrink-0 items-center gap-1">
           {loadStatus === "loading" && (
@@ -168,13 +164,13 @@ export default function App() {
 
       <main className="app-main">
         <section className="panel panel--code">
-          <div className="panel-header flex items-center justify-between px-4 py-2">
+          <div className="panel-header">
             <span className="label">Code</span>
-            {currentStep && (
-              <span className="font-mono text-[11px] tabular-nums text-highlight">
-                L{currentStep.line}
-              </span>
-            )}
+            <span
+              className={`panel-header-meta ${currentStep ? "" : "panel-header-meta--idle"}`}
+            >
+              {currentStep ? `L${currentStep.line}` : "—"}
+            </span>
           </div>
           <div className="min-h-0 flex-1">
             <CodeEditor
@@ -194,7 +190,6 @@ export default function App() {
             isPlaying={isPlaying}
             isRunning={isLoading}
             canRun={loadStatus === "ready"}
-            hasTrace={traceResult !== null}
             stdout={traceResult?.stdout ?? ""}
             onRun={handleRun}
             onStepChange={(i) => {

@@ -149,6 +149,7 @@
     flex: 1;
     gap: 0.75rem;
     padding: 0.75rem 1.25rem 1.25rem;
+    align-items: stretch;
   }
 
   @media (min-width: 1024px) {
@@ -176,9 +177,30 @@
     flex-direction: column;
   }
 
-  .panel-header {
+  .panel-header,
+  .control-bar {
+    display: flex;
+    align-items: center;
+    min-height: 3.25rem;
+    padding: 0 1rem;
     border-bottom: 1px solid var(--border);
-    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .panel-header {
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .panel-header-meta {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--highlight);
+  }
+
+  .panel-header-meta--idle {
+    color: var(--subtle);
   }
 
   .panel-divider {
@@ -193,12 +215,8 @@
   }
 
   .control-bar {
-    display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1rem;
-    padding: 0.625rem 1rem;
-    border-bottom: 1px solid var(--border);
+    gap: 0.5rem 0.75rem;
   }
 
   .control-actions {
@@ -223,10 +241,17 @@
 
   .control-count {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
     font-family: ui-monospace, monospace;
     font-size: 11px;
     font-variant-numeric: tabular-nums;
     color: var(--fg-secondary);
+  }
+
+  .control-count-sep {
+    color: var(--subtle);
   }
 
   .btn-group {
@@ -280,36 +305,14 @@
     gap: 0.125rem;
   }
 
-  .step-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-  }
-
-  .step-meta--empty {
-    color: var(--fg-secondary);
-  }
-
   .step-line {
-    font-family: ui-monospace, monospace;
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
     color: var(--highlight);
   }
 
   .step-event {
     color: var(--fg-secondary);
     text-transform: capitalize;
-  }
-
-  .step-return {
-    color: var(--subtle);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .btn-primary {
@@ -544,19 +547,6 @@
   .output-panel {
     border-top: 1px solid var(--border);
     background-color: var(--elevated);
-  }
-
-  .logo-mark {
-    border-radius: 7px;
-    background-color: #141414;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  }
-
-  .dark .logo-mark {
-    background-color: #1a1a1a;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 0 0 1px rgba(255, 255, 255, 0.06);
   }
 
   .code-editor .cm-editor,
